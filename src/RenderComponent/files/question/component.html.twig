@@ -1,0 +1,23 @@
+<div class='panel panel-default panel-all'>
+
+<div class='panel-heading'>
+
+<h5 class='panel-title'>Question</h5>
+
+</div>
+<div class='panel-body'>
+
+    <h5>{{ question | bbcode }}</h5>
+
+</div>
+
+<div class='panel-footer'>
+    {% for answerAvailable in answersAvailable %}
+        <a
+                href='{{ answerAvailable.url }}'
+                class='ajax btn btn-success btn-sm {{ answerAvailable.enabled }} {{ answerAvailable.disabled }}'
+        >
+            {{ answerAvailable.label }}
+        </a>
+    {% endfor %}
+</div>
