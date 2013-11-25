@@ -12,12 +12,35 @@
 </div>
 
 <div class='panel-footer'>
-    {% for answerAvailable in answersAvailable %}
-        <a
-                href='{{ answerAvailable.url }}'
-                class='ajax btn btn-success btn-sm {{ answerAvailable.enabled }} {{ answerAvailable.disabled }}'
-        >
-            {{ answerAvailable.label }}
-        </a>
-    {% endfor %}
+    {% if not isCanAnswer or (isAnswer and not isAnswerChangeable) %}
+
+      {% if isAnswer %}
+
+          {% for answerAvailable in answersAvailable %}
+
+              {% if answerAvailable.selected %}
+
+                  <span class="label label-{{ answerAvailable.color }}">{{ answerAvailable.label | trans({}, "question") }}</span>
+
+              {% endif %}
+
+          {% endfor %}
+
+      {% else %}
+
+          <span>{{ noAnswerMessage | trans({}, "question") | bbcode | raw }}</span>
+
+      {% endif %}
+
+    {% elseif isCanAnswer %}
+
+        {% for answerAvailable in answersAvailable %}
+            <a
+                    href='{{ answerAvailable.url }}'
+                    class='ajax btn btn-{{ answerAvailable.color }} btn-sm {{ answerAvailable.enabled }} {{ answerAvailable.disabled }}'
+            >
+                {{ answerAvailable.label | trans({}, "question") }}
+            </a>
+        {% endfor %}
+    {% endif %}
 </div>

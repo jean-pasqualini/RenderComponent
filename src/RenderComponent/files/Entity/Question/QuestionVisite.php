@@ -2,21 +2,18 @@
 
 namespace Entity\Question;
 
-use Entity\Question;
-use Entity\Visite;
-
 /**
- * Class QuestionCaseConcluded
- * @package Entity\Question
+ * Class QuestionVisite
  * @Entity
  */
-class QuestionCaseConcluded extends Question {
+class QuestionVisite extends \Entity\Question
+{
 
     /**
      * @Id
      * @Column(name="id", type="integer")
      * @GeneratedValue(strategy="AUTO")
-    */
+     */
     private $id;
 
     /**
@@ -24,10 +21,11 @@ class QuestionCaseConcluded extends Question {
      */
     private $visite;
 
-    const OUI = 1;
-    const NON = 2;
+    CONST ACCEPTER = 1;
+    CONST REFUSER = 2;
 
-    public function __construct(Visite $visite)
+
+    public function __construct(\Entity\Visite $visite)
     {
         $this->setVisite($visite);
 
@@ -35,7 +33,7 @@ class QuestionCaseConcluded extends Question {
 
         $list = $contact->getList();
 
-        $this->setQuestion("avez vous conclue par un marché pour [room id=\"".$list->getId()."\"]".$list->getTitle()."[/room] ?");
+        $this->setQuestion("[user id=\"".$contact->getUserby()->getId()."\"]".$contact->getUserby()->getUsername()."[/user] veut visite [room id=\"".$list->getId()."\"]".$list->getTitle()."[/room] le ".$visite->getDate()->format("d/m/Y")." à ".$visite->getHour()."H");
 
         parent::__construct();
     }
@@ -43,16 +41,22 @@ class QuestionCaseConcluded extends Question {
     public function getAnswerAvaiable()
     {
         return array(
-            self::OUI => array(
-                "label" => "oui, c'est exact",
+            self::ACCEPTER => array(
+                "label" => "Accepter",
                 "color" => "success",
             ),
-            self::NON => array(
-                "label" => "non, c'est faux",
-                "color" => "danger",
+            self::REFUSER => array(
+                "label" => "Refuser",
+                "color" => "danger"
             )
         );
     }
+
+    public function getNoAnswerMessage()
+    {
+        return "question.visite.noanswer";
+    }
+
 
     /**
      * @param mixed $visite
@@ -69,8 +73,6 @@ class QuestionCaseConcluded extends Question {
     {
         return $this->visite;
     }
-
-
 
 
 }

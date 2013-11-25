@@ -43,7 +43,7 @@ class question extends \controllers\AbstractController {
 
         $em->flush();
 
-        $recepters = ($questionComponent->getVisibilityByUsers()->isEmpty()) ? $this->get("user") : $questionComponent->getVisibilityByUsers()->toArray();
+        $recepters = ($questionComponent->getVisibilityByUsers()->isEmpty()) ? array($this->get("user")) : $questionComponent->getVisibilityByUsers()->toArray();
 
         $recepters = $this->get("render.eventclient")->getSessionsByUsers($recepters);
 

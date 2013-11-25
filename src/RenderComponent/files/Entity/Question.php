@@ -9,7 +9,10 @@ use Symfony\Component\Intl\Exception\InvalidArgumentException;
  * @Entity
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"questioncaseconcluded" = "Entity\Question\QuestionCaseConcluded"})
+ * @DiscriminatorMap({
+ *      "questioncaseconcluded" = "Entity\Question\QuestionCaseConcluded",
+ *      "questionvisite" = "Entity\Question\QuestionVisite"
+ * })
  */
 abstract class Question {
 
@@ -21,7 +24,7 @@ abstract class Question {
     private $id;
 
     /**
-     * @Column(name="question", type="string")
+     * @Column(name="question", type="string", length=500)
      */
     private $question;
 
@@ -35,32 +38,143 @@ abstract class Question {
      */
     private $answerAvailable;
 
-    public function getAnswerAvaiable()
-    {
-        return $this->answerAvailable;
-    }
+    /**
+     * @var ArrayCollection $usersCanAnswer
+     * @ManyToMany(targetEntity="Users")
+     * @JoinTable(name="question_usersCanAnswer")
+     */
+    private $usersCanAnswer;
 
-    public function isMultiple()
-    {
-        return false;
-    }
+    /**
+     * Non utiliser pour le moment
+     * @var ArrayCollection $usersCanViewAnswer
+     * @ManyToMany(targetEntity="Users")
+     * @JoinTable(name="question_usersCanViewAnswer")
+     */
+    private $usersCanViewAnswer;
 
-    public function setAnswerAvailable($answerAvailable)
-    {
-        $this->answerAvailable = $answerAvailable;
-    }
-
-    public function addAnswerAvailable($answerAvaialble)
-    {
-        $this->answerAvailable[] = $answerAvaialble;
-    }
 
     public function __construct()
     {
         $this->answerAvailable = array();
         $this->answers = new ArrayCollection();
+        $this->usersCanAnswer = new ArrayCollection();
+        $this->usersCanViewAnswer = new ArrayCollection();
     }
 
+    /**
+     * @return array
+     */
+    public function getAnswerAvaiable()
+    {
+        return $this->answerAvailable;
+    }
+
+    // Réponse par défaut si aucune réponse 'ex: en attente'
+
+    /**
+     * @return bool
+     */
+    public function isMultiple()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAnswerRequireForViewResponse()
+    {
+        return true;
+    }
+
+    /**
+     * @return ArrayCollection $usersCanAnswer
+     */
+    public function getUsersCanAnswer()
+    {
+        return $this->usersCanAnswer;
+    }
+
+    /**
+     * @param array $users
+     */
+    public function setUsersCanAnswer(array $users)
+    {
+        $this->usersCanAnswer = new ArrayCollection(array_unique($users));
+    }
+
+    /**
+     * @param Users $user
+     */
+    public function addUserCanAnswer(Users $user)
+    {
+        $this->usersCanAnswer->add($user);
+    }
+
+    /**
+     * @param Users $user
+     */
+    public function removeUserCanAnswer(Users $user)
+    {
+        $this->usersCanAnswer->removeElement($user);
+    }
+
+    /**
+     * @return ArrayCollection $usersCanViewAnswer
+     */
+    public function getUsersCanViewAnswer()
+    {
+        return $this->usersCanViewAnswer;
+    }
+
+    /**
+     * @param array $users
+     */
+    public function setUsersCanViewAnswer(array $users)
+    {
+        $this->usersCanViewAnswer = new ArrayCollection(array_unique($users));
+    }
+
+    /**
+     * @param Users $user
+     */
+    public function addUserCanViewAnswer(Users $user)
+    {
+        $this->usersCanViewAnswer->add($user);
+    }
+
+    /**
+     * @param Users $user
+     */
+    public function removeUserCanViewAnswer(Users $user)
+    {
+        $this->usersCanViewAnswer->removeElement($user);
+    }
+
+    // Les utilisateurs qui peuvent répondre
+
+    // Les utilisateur qui peuvent voir les réponses
+
+    /**
+     * @param $answerAvailable
+     */
+    public function setAnswerAvailable($answerAvailable)
+    {
+        $this->answerAvailable = $answerAvailable;
+    }
+
+    /**
+     * @param $answerAvaialble
+     */
+    public function addAnswerAvailable($answerAvaialble)
+    {
+        $this->answerAvailable[] = $answerAvaialble;
+    }
+
+    /**
+     * @return bool
+     */
     public function isAnswerChangeable()
     {
         return false;
@@ -82,6 +196,9 @@ abstract class Question {
         return $this->question;
     }
 
+    /**
+     * @param AnswerQuestion $answer
+     */
     public function addAnswer(AnswerQuestion $answer)
     {
         $answersUser = $this->getAnswersByUser($answer->getUser());
@@ -102,9 +219,17 @@ abstract class Question {
         }
     }
 
+    /**
+     * @param array $answers
+     */
     public function setAnswer(array $answers)
     {
         $this->answers = new ArrayCollection($answers);
+    }
+
+    public function getNoAnswerMessage()
+    {
+        return "unknow.answer";
     }
 
     /**
@@ -115,6 +240,10 @@ abstract class Question {
         return $this->answers;
     }
 
+    /**
+     * @param Users $user
+     * @return \Doctrine\Common\Collections\Collection
+     */
     public function getAnswersByUser(Users $user)
     {
         return $this->getAnswers()->filter(function(AnswerQuestion $element) use ($user)
@@ -123,6 +252,11 @@ abstract class Question {
         });
     }
 
+    /**
+     * @param $answer
+     * @param $user
+     * @return mixed
+     */
     public function getAnswerByUserAndValue($answer, $user)
     {
         return current($this->getAnswersByUser($user)->filter(function($element) use ($answer)
@@ -131,14 +265,17 @@ abstract class Question {
         }));
     }
 
+    /**
+     * @return boolean
+     */
     public function hasAnswer()
     {
-        return $this->answers;
+        return !$this->answers->isEmpty();
     }
 
 
     /**
-     * @param mixed $id
+     * @param integer $id
      */
     public function setId($id)
     {
@@ -146,7 +283,7 @@ abstract class Question {
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getId()
     {

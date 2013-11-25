@@ -27,9 +27,16 @@ class QuestionRenderComponent extends RenderComponent {
 
         $answersAvailable = array();
 
-        $answer = (!$question->getAnswersByUser($user)->isEmpty()) ? $question->getAnswersByUser($user)->first()->getAnswer() : array();
+        if($question->getUsersCanAnswer()->contains($user))
+        {
+            $answer = (!$question->getAnswersByUser($user)->isEmpty()) ? $question->getAnswersByUser($user)->first()->getAnswer() : array();
+        }
+        else
+        {
+            $answer = (!$question->getAnswers()->isEmpty()) ? $question->getAnswers()->first()->getAnswer() : array();
+        }
 
-        foreach($question->getAnswerAvaiable() as $value => $label)
+        foreach($question->getAnswerAvaiable() as $value => $config)
         {
             $selected = ($value == $answer) ? true : false;
 
@@ -44,13 +51,20 @@ class QuestionRenderComponent extends RenderComponent {
                 "enabled" => $enabled,
                 "disabled" => $disabled,
                 "url" => $url,
-                "label" => $label
+                "label" => $config["label"],
+                "color" => $config["color"],
             );
         }
 
         return array(
             "question" => $question->getQuestion(),
-            "answersAvailable" => $answersAvailable
+            "answersAvailable" => $answersAvailable,
+            "isAnswerMultiple" => $question->isMultiple(),
+            "isCanAnswer" => $question->getUsersCanAnswer()->contains($user),
+            "isCanViewAnswer" => $question->getUsersCanViewAnswer()->contains($user),
+            "isAnswerChangeable" => $question->isAnswerChangeable(),
+            "noAnswerMessage" => $question->getNoAnswerMessage(),
+            "isAnswer" => !empty($answer)
         );
     }
 

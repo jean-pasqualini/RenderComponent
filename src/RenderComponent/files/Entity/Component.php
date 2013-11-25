@@ -39,6 +39,8 @@ abstract class Component {
         return $this->id;
     }
 
+    abstract public function getTitle();
+
 
     public function setVisibilityByUsers(array $users = array())
     {
