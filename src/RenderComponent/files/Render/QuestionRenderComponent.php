@@ -2,7 +2,8 @@
 
 namespace Render;
 
-use Entity\Components\QuestionComponent;
+use Entity\AutoLogin;
+use \Entity\Components\QuestionComponent;
 use interfaces\UserInterface;
 
 class QuestionRenderComponent extends RenderComponent {
@@ -12,6 +13,8 @@ class QuestionRenderComponent extends RenderComponent {
     public function __construct(QuestionComponent $questionComponent)
     {
         $this->questionComponent = $questionComponent;
+
+        parent::__construct($questionComponent);
     }
 
     public function getQuestionComponent()
@@ -21,9 +24,14 @@ class QuestionRenderComponent extends RenderComponent {
 
     public function getDataForRender(UserInterface $user = null)
     {
-        $user = (null === $user) ? $this->getContainer()->get("user") : $user;
+        $user = (null === $user) ? (($this->getContainer()->has("user")) ? $this->getContainer()->get("user") : null) : $user;
 
         $question = $this->questionComponent->getQuestion();
+
+        /**
+         * @var $apikeyauth \Entity\ApiKeyAuth
+         */
+        $apiKeyAuth = $this->getApiKeyAuth(($user === null) ? null : $user->getProfile());
 
         $answersAvailable = array();
 
@@ -44,7 +52,7 @@ class QuestionRenderComponent extends RenderComponent {
 
             $disabled = (!empty($answers) && !$selected && !$question->isAnswerChangeable()) ? "disabled" : "";
 
-            $url = (null === $this->getContainer()) ? "/question/answer/".$question->getId()."/$value" : $this->getContainer()->get("router")->generate("/question/answer/".$this->questionComponent->getId()."/$value", array(), true);
+            $url = (null === $this->getContainer()) ? "/question/answer/".$question->getId()."/$value" : $this->getContainer()->get("router")->generate("question/answer/".$this->questionComponent->getId()."/$value/".$apiKeyAuth->getKey(), array(), true);
 
             $answersAvailable[] = array(
                 "selected" => $selected,
@@ -52,12 +60,13 @@ class QuestionRenderComponent extends RenderComponent {
                 "disabled" => $disabled,
                 "url" => $url,
                 "label" => $config["label"],
+                "labelonview" => (isset($config["labelonview"])) ? $config["labelonview"] : "",
                 "color" => $config["color"],
             );
         }
 
         return array(
-            "question" => $question->getQuestion(),
+            "question" => $question->getQuestion($user->getProfile()),
             "answersAvailable" => $answersAvailable,
             "isAnswerMultiple" => $question->isMultiple(),
             "isCanAnswer" => $question->getUsersCanAnswer()->contains($user),
@@ -70,10 +79,12 @@ class QuestionRenderComponent extends RenderComponent {
 
     public function getRender($mode = self::VIEW_HTML, UserInterface $user = null)
     {
+        $dataRender = array_merge($this->getDataForRender($user), array("RENDER_MODE" => $mode));
+
         return $this
             ->getContainer()
             ->get("twig")
-            ->render("question/component.html.twig", $this->getDataForRender($user));
+            ->render("question/component.html.twig", $dataRender);
     }
 
 }

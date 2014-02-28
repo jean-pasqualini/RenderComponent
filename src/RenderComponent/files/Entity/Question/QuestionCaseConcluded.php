@@ -2,13 +2,14 @@
 
 namespace Entity\Question;
 
-use Entity\Question;
-use Entity\Visite;
+use Entity\Profiles;
+use \Entity\Question;
+use \Entity\Visite;
 
 /**
  * Class QuestionCaseConcluded
  * @package Entity\Question
- * @Entity
+ * @Entity(repositoryClass="Entity\Repository\QuestionCaseConcluedRepository")
  */
 class QuestionCaseConcluded extends Question {
 
@@ -26,6 +27,7 @@ class QuestionCaseConcluded extends Question {
 
     const OUI = 1;
     const NON = 2;
+    const EN_COURS = 3;
 
     public function __construct(Visite $visite)
     {
@@ -40,16 +42,42 @@ class QuestionCaseConcluded extends Question {
         parent::__construct();
     }
 
+
+    public function getQuestion(Profiles $profile = null)
+    {
+        $visite = $this->getVisite();
+
+        $contact = $visite->getContact();
+
+        $list = $contact->getList();
+
+        if($profile === $contact->getList()->getProfile())
+        {
+            return "Suite à la visite de l'appartement [room id=\"".$list->getId()."\"]".$list->getTitle()."[/room], votre dossier a-t-il été accepté ?";
+        }
+        else
+        {
+            return "Suite à la visite de l'appartement [room id=\"".$list->getId()."\"]".$list->getTitle()."[/room], avez vous accepté le dossier de xxx ?";
+        }
+    }
+
     public function getAnswerAvaiable()
     {
         return array(
             self::OUI => array(
-                "label" => "oui, c'est exact",
+                "label" => "Oui",
+                "labelonview" => "Dossier validé",
                 "color" => "success",
             ),
             self::NON => array(
-                "label" => "non, c'est faux",
+                "label" => "Non",
+                "labelonview" => "Dossier refusé",
                 "color" => "danger",
+            ),
+            self::EN_COURS => array(
+                "label" => "En cours",
+                "labelonview" => "Dossier en cours de validation",
+                "color" => "warning"
             )
         );
     }

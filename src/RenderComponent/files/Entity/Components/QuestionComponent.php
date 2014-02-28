@@ -1,8 +1,8 @@
 <?php
 namespace Entity\Components;
 
-use Entity\Component;
-use Entity\Question;
+use \Entity\Component;
+use \Entity\Question;
 use Render\QuestionRenderComponent;
 
 /**
@@ -56,6 +56,12 @@ class QuestionComponent extends Component {
     {
         return new QuestionRenderComponent($this);
     }
+
+    public function getTitle()
+    {
+        return "Question"; //$this->getTitleComponent();
+    }
+
 
     /**
      * @param mixed $id

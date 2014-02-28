@@ -55,6 +55,11 @@ abstract class Component {
         return $this->visibilityByUsers;
     }
 
+    public function getKey()
+    {
+        return __CLASS__."@".$this->getId();
+    }
+
 
 
 }

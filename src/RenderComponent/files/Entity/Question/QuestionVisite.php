@@ -33,7 +33,7 @@ class QuestionVisite extends \Entity\Question
 
         $list = $contact->getList();
 
-        $this->setQuestion("[user id=\"".$contact->getUserby()->getId()."\"]".$contact->getUserby()->getUsername()."[/user] veut visite [room id=\"".$list->getId()."\"]".$list->getTitle()."[/room] le ".$visite->getDate()->format("d/m/Y")." à ".$visite->getHour()."H");
+        $this->setQuestion("[user id=\"".$contact->getUserby()->getId()."\"]".$contact->getUserby()->getProfile()->getFname()."[/user] souhaite visiter [room id=\"".$list->getId()."\"]".$list->getTitle()."[/room] le ".$visite->getDate()->format("d/m/Y")." à ".$visite->getHour()."H");
 
         parent::__construct();
     }
@@ -43,10 +43,12 @@ class QuestionVisite extends \Entity\Question
         return array(
             self::ACCEPTER => array(
                 "label" => "Accepter",
+                "labelonview" => "Visite acceptée",
                 "color" => "success",
             ),
             self::REFUSER => array(
                 "label" => "Refuser",
+                "labelonview" => "Visite refusée",
                 "color" => "danger"
             )
         );

@@ -36,7 +36,7 @@ abstract class Question {
     /**
      * @Column(name="answeravailable", type="array")
      */
-    private $answerAvailable;
+    private $answerAvailable = array();
 
     /**
      * @var ArrayCollection $usersCanAnswer
@@ -191,7 +191,7 @@ abstract class Question {
     /**
      * @return mixed
      */
-    public function getQuestion()
+    public function getQuestion($context = null)
     {
         return $this->question;
     }
@@ -238,6 +238,18 @@ abstract class Question {
     public function getAnswers()
     {
         return $this->answers;
+    }
+
+    public function isUserAnswerValue(Users $user, $value)
+    {
+        $answer = $this->getAnswerByUserAndValue($value, $user);
+
+        return !empty($answer);
+    }
+
+    public function isUserAnswer(Users $user)
+    {
+        return !$this->getAnswersByUser($user)->isEmpty();
     }
 
     /**
@@ -288,6 +300,11 @@ abstract class Question {
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getAfterChoiceMessage()
+    {
+        return "Votre réponse à bien été prise en compte";
     }
 
 
