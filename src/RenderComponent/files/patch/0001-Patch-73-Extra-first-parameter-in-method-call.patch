@@ -1,0 +1,39 @@
+From 9627932347bf388cabf51414aac284e87adb63a8 Mon Sep 17 00:00:00 2001
+From: onetest <jpasqualini75@gmail.com>
+Date: Wed, 13 Nov 2013 13:12:21 +0100
+Subject: [PATCH] Patch #73 Extra first parameter in method call
+
+---
+ src/TwigJs/Compiler/Expression/GetAttrCompiler.php |   16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/src/TwigJs/Compiler/Expression/GetAttrCompiler.php b/src/TwigJs/Compiler/Expression/GetAttrCompiler.php
+index 66ed85d..e536be7 100644
+--- a/src/TwigJs/Compiler/Expression/GetAttrCompiler.php
++++ b/src/TwigJs/Compiler/Expression/GetAttrCompiler.php
+@@ -57,21 +57,7 @@ class GetAttrCompiler implements TypeCompilerInterface
+         $defaultTest = false == $node->getAttribute('is_defined_test');
+ 
+         if (!$defaultArguments) {
+-            $compiler->raw(', [');
+-
+-            $first = true;
+-            foreach ($node->getNode('arguments') as $argNode) {
+-                if (!$first) {
+-                    $compiler->raw(', ');
+-                }
+-                $first = false;
+-
+-                $compiler
+-                    ->subcompile($argNode)
+-                ;
+-            }
+-
+-            $compiler->raw(']');
++            $compiler->raw(', ')->subcompile($node->getNode('arguments'));
+         } else if (!$defaultAccess || !$defaultTest) {
+             $compiler->raw(', undefined');
+         }
+-- 
+1.7.9.5
+

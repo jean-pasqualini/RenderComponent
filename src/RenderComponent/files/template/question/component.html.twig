@@ -1,0 +1,48 @@
+<div class='panel panel-default panel-all'>
+
+    <div class='panel-heading'>
+
+      <h5 class='panel-title'>Question</h5>
+
+    </div>
+    <div class='panel-body'>
+
+        <h5>{{ question | bbcode }}</h5>
+
+    </div>
+
+    <div class='panel-footer'>
+
+        {% if not isCanAnswer or (isAnswer and not isAnswerChangeable) %}
+
+          {% if isAnswer %}
+
+              {% for answerAvailable in answersAvailable %}
+
+                  {% if answerAvailable.selected %}
+
+                      <span class="label label-{{ answerAvailable.color }}">{% if answerAvailable.labelonview is not empty %}{{ answerAvailable.labelonview | trans({}, "question") }}{% else %}{{ answerAvailable.label | trans({}, "question") }}{% endif %}</span>
+
+                  {% endif %}
+
+              {% endfor %}
+
+          {% else %}
+
+              <span>{{ noAnswerMessage | trans({}, "question") | bbcode | raw }}</span>
+
+          {% endif %}
+
+        {% elseif isCanAnswer %}
+
+            {% for answerAvailable in answersAvailable %}
+                <a
+                        href='{{ answerAvailable.url }}'
+                        class='ajax btn btn-{{ answerAvailable.color }} btn-sm {{ answerAvailable.enabled }} {{ answerAvailable.disabled }}'
+                >
+                    {{ answerAvailable.label | trans({}, "question") }}
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

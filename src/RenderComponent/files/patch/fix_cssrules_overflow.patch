@@ -1,0 +1,72 @@
+From 57347bd595219449d9a997b2b69a7eddae50e311 Mon Sep 17 00:00:00 2001
+From: onetest <jpasqualini75@gmail.com>
+Date: Thu, 19 Dec 2013 19:59:07 +0100
+Subject: [PATCH] update fix
+
+---
+ CssToInlineStyles.php |   39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/CssToInlineStyles.php b/CssToInlineStyles.php
+index 21cfe7f..eba1e00 100644
+--- a/CssToInlineStyles.php
++++ b/CssToInlineStyles.php
+@@ -198,21 +198,18 @@ class CssToInlineStyles
+         return $html;
+     }
+ 
+-
+-    /**
+-     * Converts the loaded HTML into an HTML-string with inline styles based on the loaded CSS
+-     *
+-     * @return string
+-     * @param  bool[optional] $outputXHTML Should we output valid XHTML?
+-     */
+-    public function convert($outputXHTML = false)
++    public function setCssRules($cssRules)
+     {
+-        // redefine
+-        $outputXHTML = (bool) $outputXHTML;
++        $this->cssRules = $cssRules;
++    }
+ 
+-        // validate
+-        if($this->html == null) throw new Exception('No HTML provided.');
++    public function getCssRules()
++    {
++        return $this->cssRules;
++    }
+ 
++    public function processAllCss()
++    {
+         // should we use inline style-block
+         if ($this->useInlineStylesBlock) {
+             // init var
+@@ -230,6 +227,24 @@ class CssToInlineStyles
+ 
+         // process css
+         $this->processCSS();
++    }
++
++
++    /**
++     * Converts the loaded HTML into an HTML-string with inline styles based on the loaded CSS
++     *
++     * @return string
++     * @param  bool[optional] $outputXHTML Should we output valid XHTML?
++     */
++    public function convert($outputXHTML = false, $processCss = true)
++    {
++        // redefine
++        $outputXHTML = (bool) $outputXHTML;
++
++        // validate
++        if($this->html == null) throw new Exception('No HTML provided.');
++
++        if($processCss) $this->processAllCss();
+ 
+         // create new DOMDocument
+         $document = new \DOMDocument('1.0', $this->getEncoding());
+-- 
+1.7.9.5
+

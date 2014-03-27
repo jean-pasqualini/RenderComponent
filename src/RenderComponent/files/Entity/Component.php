@@ -8,7 +8,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @Entity
  * @InheritanceType("SINGLE_TABLE")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorMap({"questioncomponent" = "Entity\Components\QuestionComponent"})
+ * @DiscriminatorMap({
+ *    "questioncomponent" = "Entity\Components\QuestionComponent",
+ *    "moviecomponent" = "Entity\Components\MovieComponent",
+ *    "formcomponent" = "Entity\Components\FormComponent",
+ *    "containercomponent" = "Entity\Components\ContainerComponent"
+ * })
  */
 abstract class Component {
 

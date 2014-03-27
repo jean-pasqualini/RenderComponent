@@ -1,0 +1,10 @@
+{% if webh264 is empty or mode == "MAIL" %}
+    <img src="http://{{ app.get("domaine") }}/{{ webpicture }}"/>
+{% else %}
+    <div  style="margin: auto; width: 320px;">
+        <video {% if autoload is defined %} autoload {% endif %} id="movie-{{ id }}" poster="/{{ webpicture }}" controls="controls" preload="none">
+            <source src="/{{ webh264 }}" type="video/mp4">
+            <source src="/{{ webwebm }}" type="video/webm">
+        </video>
+    </div>
+{% endif %}

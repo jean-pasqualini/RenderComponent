@@ -1,0 +1,8 @@
+{% block component_widget %}
+    {% if value is not null %}
+        {{ value | renderComponent }}
+    {% else %}
+        Component null 
+    {% endif %}
+{% endblock %}
+

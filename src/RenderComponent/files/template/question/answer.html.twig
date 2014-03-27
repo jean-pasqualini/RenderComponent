@@ -1,0 +1,10 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+<div class="col-md-6 col-md-offset-3">
+<h1>Votre réponse à bien été prise en compte </h1>
+<div class="component-{{ renderComponent.getQuestionComponent().getId() }}">
+  {{ renderComponent | renderComponent }}
+</div>
+</div>
+{% endblock %}

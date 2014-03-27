@@ -66,7 +66,7 @@ class QuestionRenderComponent extends RenderComponent {
         }
 
         return array(
-            "question" => $question->getQuestion($user->getProfile()),
+            "question" => $question->getQuestion(($user === null) ? null : $user->getProfile()),
             "answersAvailable" => $answersAvailable,
             "isAnswerMultiple" => $question->isMultiple(),
             "isCanAnswer" => $question->getUsersCanAnswer()->contains($user),
