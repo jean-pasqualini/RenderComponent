@@ -1,0 +1,5 @@
+
+{% for component in components %}
+    {{ component.getRenderComponent() | renderComponent(app.user, mode) }}
+    <hr>
+{% endfor %}

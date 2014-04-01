@@ -1,6 +1,7 @@
 <?php
 namespace Entity\Components;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Entity\Component;
 use Render\ContainerRenderComponent;
 
@@ -19,7 +20,7 @@ class ContainerComponent extends Component
     protected $id;
 
     /**
-     * @ManyToMany(targetEntity="Entity\Component")
+     * @ManyToMany(targetEntity="Entity\Component", cascade={"persist"})
      */
     protected $components;
 
@@ -30,7 +31,7 @@ class ContainerComponent extends Component
 
 
     /**
-     * @return mixed
+     * @return \Entity\Component[]
      */
     public function getComponents()
     {
@@ -60,6 +61,16 @@ class ContainerComponent extends Component
     public function getRenderComponent()
     {
         return new ContainerRenderComponent($this);
+    }
+
+    public function setVisibilityByUsers(array $users = array(), $recursive = true)
+    {
+        foreach($this->getComponents() as $component)
+        {
+            $component->setVisibilityByUsers($users);
+        }
+
+        parent::setVisibilityByUsers($users);
     }
 
 
