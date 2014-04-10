@@ -12,6 +12,7 @@ abstract class RenderComponent implements containerAwaireInterface
     const VIEW_HTML = "HTML";
     const VIEW_TEXTE = "TEXTE";
     const VIEW_SMS = "SMS";
+    const VIEW_FORM = "FORM";
     const VIEW_MAIL = "MAIL";
 
     abstract public function getRender($mode = self::VIEW_HTML, UserInterface $user = null);

@@ -2,6 +2,7 @@
 namespace Entity\Components;
 
 use Entity\Component;
+use FormType\SondageType;
 use Render\FormRenderComponent;
 
 /**
@@ -18,18 +19,19 @@ class FormComponent extends Component
      */
     protected $id;
 
+    private $form;
+
     public function __construct()
     {
-
+        $this->form = new SondageType();
     }
-
 
     /**
      * @return mixed
      */
     public function getForm()
     {
-
+        return $this->form;
     }
 
     public function getTitleComponent()
