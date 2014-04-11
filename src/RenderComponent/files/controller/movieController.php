@@ -37,6 +37,11 @@ class movieController extends AbstractController
         $picturefile = APP_DIRECTORY.DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR.uniqid("video_").".jpg";
 
         $video
+            ->filters()
+            ->resize(new Dimension(320, 240))
+        ;
+
+        $video
             ->frame(TimeCode::fromSeconds(1))
             ->save($picturefile)
         ;

@@ -25,6 +25,11 @@ abstract class Component {
     protected $id;
 
     /**
+     * @ManyToMany(targetEntity="Profiles", cascade={"persist"})
+     */
+    protected $visibilityByProfiles;
+
+    /**
      * @ManyToMany(targetEntity="Users", cascade={"persist"})
      */
     protected  $visibilityByUsers;
@@ -37,6 +42,7 @@ abstract class Component {
     public function __construct()
     {
         $this->visibilityByUsers = new ArrayCollection();
+        $this->visibilityByProfiles = new ArrayCollection();
     }
 
     public function getId()
@@ -46,10 +52,26 @@ abstract class Component {
 
     abstract public function getTitle();
 
-
     public function setVisibilityByUsers(array $users = array())
     {
         $this->visibilityByUsers = new ArrayCollection($users);
+
+        $this->setVisibilityByProfiles(array());
+
+        foreach($users as $user)
+        {
+            $this->getVisibiblityByProfiles()->add($user->getProfile());
+        }
+    }
+
+    public function setVisibilityByProfiles(array $profiles = array())
+    {
+        $this->visibilityByProfiles = new ArrayCollection($profiles);
+    }
+
+    public function getVisibiblityByProfiles()
+    {
+        return $this->visibilityByProfiles;
     }
 
     /**
